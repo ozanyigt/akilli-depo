@@ -1,0 +1,6 @@
+StockMovementNotExists: Stock movement don't exists.
+InvalidMovementType: Movement type must be IN or OUT.
+QuantityMustBePositive: Quantity must be greater than zero.
+InsufficientStock: Insufficient stock in the selected warehouse slot.
+CapacityExceeded: Warehouse slot capacity would be exceeded.
+WarehouseSlotMismatch: Selected slot does not belong to the selected warehouse.

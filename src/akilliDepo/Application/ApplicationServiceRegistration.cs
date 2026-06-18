@@ -16,6 +16,11 @@ using NArchitecture.Core.Localization.Resource.Yaml.DependencyInjection;
 using NArchitecture.Core.Mailing;
 using NArchitecture.Core.Mailing.MailKit;
 using NArchitecture.Core.Security.JWT;
+using Application.Services.Companies;
+using Application.Services.Products;
+using Application.Services.StockMovements;
+using Application.Services.Warehouses;
+using Application.Services.WarehouseSlots;
 
 namespace Application;
 
@@ -53,6 +58,12 @@ public static class ApplicationServiceRegistration
         services.AddYamlResourceLocalization();
 
 
+        services.AddScoped<ICompanyService, CompanyManager>();
+        services.AddScoped<IProductService, ProductManager>();
+        services.AddScoped<IStockMovementService, StockMovementManager>();
+        services.AddScoped<IWarehouseService, WarehouseManager>();
+        services.AddScoped<IWarehouseSlotService, WarehouseSlotManager>();
+        services.AddScoped<IProductService, ProductManager>();
         return services;
     }
 

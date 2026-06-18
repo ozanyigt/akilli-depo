@@ -1,6 +1,5 @@
 using Application;
 using Infrastructure;
-using NArchitecture.Core.CrossCuttingConcerns.Exception.WebApi.Extensions;
 using NArchitecture.Core.CrossCuttingConcerns.Logging.Configurations;
 using NArchitecture.Core.ElasticSearch.Models;
 using NArchitecture.Core.Localization.WebApi;
@@ -12,6 +11,7 @@ using NArchitecture.Core.Security.WebApi.Swagger.Extensions;
 using Persistence;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using WebAPI;
+using WebAPI.Middleware;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +38,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors(opt =>
     opt.AddDefaultPolicy(p =>
     {
-        p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        p.SetIsOriginAllowed(_ => true)
+            .AllowAnyMethod()
+            .AllowAnyHeader();
     })
 );
 builder.Services.AddSwaggerGen(opt =>
@@ -57,20 +59,14 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-if (app.Environment.IsProduction())
-    app.ConfigureCustomExceptionMiddleware();
+app.UseGlobalExceptionMiddleware();
 
 app.UseDbMigrationApplier();
 
-
-app.MapControllers();
-
-const string webApiConfigurationSection = "WebAPIConfiguration";
-WebApiConfiguration webApiConfiguration =
-    app.Configuration.GetSection(webApiConfigurationSection).Get<WebApiConfiguration>()
-    ?? throw new InvalidOperationException($"\"{webApiConfigurationSection}\" section cannot found in configuration.");
-app.UseCors(opt => opt.WithOrigins(webApiConfiguration.AllowedOrigins).AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+app.UseCors();
 
 app.UseResponseLocalization();
+
+app.MapControllers();
 
 app.Run();
